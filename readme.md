@@ -15,6 +15,7 @@ vz.touch($('#mything'), {
     alert('Clicked!')
   }
 });
+```
 
 ## What it does
 
