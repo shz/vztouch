@@ -60,10 +60,11 @@ UI janks from prematurely ending the drag.
 
 ## API
 
-Binding is pretty easy:
-
 ```javascript
+// Bind
 var killer = vz.touch(el, options, events);
+// Unbind
+killer();
 ```
 
  * `el` - Either a DOM element or an Array-like list of DOM elements (e.g.
@@ -86,7 +87,7 @@ event argument for backwards compatibility, but it does nothing.
 
 ### The event object
 
-This guy's a little custom.  Here's the spec:
+This guy's custom.  Here's the spec:
 
 ```javascript
 {
@@ -115,3 +116,9 @@ This guy's a little custom.  Here's the spec:
                     // 2 for ending (fired on last drag event)
 }
 ```
+
+## License
+
+Public domain, see licence.txt for details.
+
+Developed at and opened sourced by [Vizify](https://www.vizify.com), from Portland with love.
