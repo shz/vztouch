@@ -21,9 +21,9 @@ vz.touch($('#mything'), {
 
 There are a few buckets of functionality `vz.touch` provides:
 
- * Works around browser bugs
  * Provides a normalized interface across touch and click events
  * Provides useful extra information with its events (e.g. cursor position)
+ * Works around browser bugs
 
 With the exception of the Android 4.x stock browser, `vz.touch` supports
 touch and click events *in tandem*, so if you've got, say, a touchscreen
