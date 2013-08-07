@@ -159,18 +159,22 @@
     var getPosX = function(e) {
       if (e.touches && e.touches.length)
         return e.touches[0].pageX;
-      else if (typeof e.pageX == 'number')
+      else if (!e.touches && typeof e.pageX == 'number')
         return e.pageX;
+      else if (!e.touches && typeof e.clientX == 'number')
+        return e.clientX + document.body.scrollLeft;
       else
-        return e.pageX + document.body.scrollLeft;
+        return undefined;
     };
     var getPosY = function(e) {
       if (e.touches && e.touches.length)
         return e.touches[0].pageY;
-      else if (typeof e.pageY == 'number')
+      else if (!e.touches && typeof e.pageY == 'number')
         return e.pageY;
+      else if (!e.touches && typeof e.clientY == 'number')
+        return e.clientY + document.body.scrollTop;
       else
-        return e.pageY + document.body.scrollTop;
+      return undefined;
     };
 
     // Special handler for ending drags regardless of where the cursor is
@@ -230,7 +234,6 @@
         });
       }
 
-
       // For dragging via mouse-type events, disable text selection.
       if (events.drag && e.type == 'mousedown') {
         e.preventDefault();
@@ -266,6 +269,17 @@
       if (DEBUG)
         console.log('up', e.type);
 
+      var x = 0;
+      var y = 0;
+      if (events.click || events.up) {
+        x = getPosX(e);
+        y = getPosY(e);
+        if (!x && x !== 0)
+          x = dragInfo.x;
+        if (!y && y !== 0)
+          y = dragInfo.y;
+      }
+
       // If the user's listening for up events, pass on through
       if (events.up) {
         e.preventDefault();
@@ -274,8 +288,8 @@
           preventDefault: function() {},
           target: e.target,
           absolute: {
-            x: getPosX(e),
-            y: getPosY(e),
+            x: x,
+            y: y,
             t: +new Date()
           }
         });
@@ -295,8 +309,8 @@
             preventDefault: function() {},
             target: e.target,
             absolute: {
-              x: getPosX(e),
-              y: getPosY(e),
+              x: x,
+              y: y,
               t: +new Date()
             }
           });
