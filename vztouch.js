@@ -1,3 +1,5 @@
+'use strict';
+
 // TODO - allowDragScroll: 'horizontal' || 'vertical'
 
 //
@@ -34,6 +36,7 @@
 // }
 //
 // Note that relative, delta, and dragState ONLY appear for drag events
+//
 
 (function() {
 
@@ -152,6 +155,24 @@
       return false;
     };
 
+    // Gets the window position of an event
+    var getPosX = function(e) {
+      if (e.touches && e.touches.length)
+        return e.touches[0].pageX;
+      else if (typeof e.pageX == 'number')
+        return e.pageX;
+      else
+        return e.pageX + document.body.scrollLeft;
+    };
+    var getPosY = function(e) {
+      if (e.touches && e.touches.length)
+        return e.touches[0].pageY;
+      else if (typeof e.pageY == 'number')
+        return e.pageY;
+      else
+        return e.pageY + document.body.scrollTop;
+    };
+
     // Special handler for ending drags regardless of where the cursor is
     var dragEnder = function(e) {
       if (DEBUG)
@@ -202,8 +223,8 @@
           preventDefault: function() {},
           target: e.target,
           absolute: {
-            x: e.touches && e.touches.length ? e.touches[0].pageX : e.clientX,
-            y: e.touches && e.touches.length ? e.touches[0].pageY : e.clientY,
+            x: getPosX(e),
+            y: getPosY(e),
             t: +new Date()
           }
         });
@@ -211,21 +232,18 @@
 
 
       // For dragging via mouse-type events, disable text selection.
-      if (events.drag || e.type == 'mousedown') {
+      if (events.drag && e.type == 'mousedown') {
         e.preventDefault();
       }
 
-      // For drag events bootstrap the position and element
+      // For drag events bootstrap the position and element.  Touchstart
+      // is similar, because we need to track the start of a potential
+      // "click" event.
       if (events.drag || e.type == 'touchstart') {
 
         // Set drag starting coordinates
-        if (e.touches) {
-          dragInfo.sx = e.touches[0].pageX;
-          dragInfo.sy = e.touches[0].pageY;
-        } else {
-          dragInfo.sx = e.clientX;
-          dragInfo.sy = e.clientY;
-        }
+        dragInfo.sx = getPosX(e);
+        dragInfo.sy = getPosY(e);
         dragInfo.x = dragInfo.sx;
         dragInfo.y = dragInfo.sy;
         dragInfo.tx = 0;
@@ -256,8 +274,8 @@
           preventDefault: function() {},
           target: e.target,
           absolute: {
-            x: e.touches && e.touches.length ? e.touches[0].pageX : e.clientX,
-            y: e.touches && e.touches.length ? e.touches[0].pageY : e.clientY,
+            x: getPosX(e),
+            y: getPosY(e),
             t: +new Date()
           }
         });
@@ -277,8 +295,8 @@
             preventDefault: function() {},
             target: e.target,
             absolute: {
-              x: e.touches && e.touches.length ? e.touches[0].pageX : e.clientX,
-              y: e.touches && e.touches.length ? e.touches[0].pageY : e.clientY,
+              x: getPosX(e),
+              y: getPosY(e),
               t: +new Date()
             }
           });
@@ -291,13 +309,14 @@
         console.log('click', e.type);
 
       if (!ignoreThisClick && events.click) {
+        e.preventDefault();
         events.click.call(this, {
           stopPropagation: function() { e.stopPropagation() },
           preventDefault: function() {},
           target: e.target,
           absolute: {
-            x: e.touches ? e.touches[0].clientX : e.clientX,
-            y: e.touches ? e.touches[0].clientY : e.clientY,
+            x: getPosX(e),
+            y: getPosY(e),
             t: +new Date()
           }
         });
@@ -313,15 +332,8 @@
         return;
 
       // New position
-      var nx = 0;
-      var ny = 0;
-      if (e.touches) {
-        nx = e.touches[0].pageX;
-        ny = e.touches[0].pageY;
-      } else {
-        nx = e.clientX;
-        ny = e.clientY;
-      }
+      var nx = getPosX(e);
+      var ny = getPosY(e);
 
       // New date
       var nt = +new Date();

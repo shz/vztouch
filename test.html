@@ -50,58 +50,44 @@
     <script>
       var text = document.getElementById('text');
 
+      var log = function(type, name, e) {
+        text.innerHTML += '<span class="' + type + '">' + name + ' ' + e.absolute.x + ', ' + e.absolute.y + '</span><br>';
+      };
+      var bind = function(name, map) {
+        if (!map) map = {};
+
+        var start = {x: 50, y: 50};
+        var m = {
+          up: function(e) { log(name, 'Up', e) },
+          down: function(e) { log(name, 'Down', e) },
+          click: function(e) { log(name, 'Click', e) },
+          drag: function(e) {
+            var s = this.style;
+            s.WebkitTransform =
+            s.MozTransform =
+            s.msTransform =
+            s.OTransform =
+            s.transform = 'translate3d(' + (e.absolute.x - start.x) + 'px, '
+                        + (e.absolute.y - start.y) + 'px, 0)';
+          }
+        };
+        for (var i in map) if (map.hasOwnProperty(i))
+          m[i] = map[i];
+        vz.touch(document.getElementById(name), m);
+      };
+
       // Test binding all events
-      vz.touch(document.getElementById('all'), {
-        click: function(e) {
-          text.innerHTML += '<span class="all">Click</span><br>';
-        },
-        drag: function(e) {
-          var s = this.style;
-          s.WebkitTransform =
-          s.MozTransform =
-          s.msTransform =
-          s.OTransform =
-          s.transform = 'translate3d(' + e.absolute.x + 'px, ' + e.absolute.y + 'px, 0)';
-        },
-        up: function(e) {
-          text.innerHTML += '<span class="all">Up</span><br>';
-        },
-        down: function(e) {
-          text.innerHTML += '<span class="all">Down</span><br>';
-        }
-      });
+      bind('all');
 
       // Test binding up/down/drag
-      vz.touch(document.getElementById('up-down-drag'), {
-        drag: function(e) {
-          var s = this.style;
-          s.WebkitTransform =
-          s.MozTransform =
-          s.msTransform =
-          s.OTransform =
-          s.transform = 'translate3d(' + e.absolute.x + 'px, ' + e.absolute.y + 'px, 0)';
-        },
-        up: function(e) {
-          text.innerHTML += '<span class="up-down-drag">Up</span><br>';
-        },
-        down: function(e) {
-          text.innerHTML += '<span class="up-down-drag">Down</span><br>';
-        }
+      bind('up-down-drag', {
+        click: undefined
       });
 
       // Test binding click/drag
-      vz.touch(document.getElementById('click-drag'), {
-        drag: function(e) {
-          var s = this.style;
-          s.WebkitTransform =
-          s.MozTransform =
-          s.msTransform =
-          s.OTransform =
-          s.transform = 'translate3d(' + e.absolute.x + 'px, ' + e.absolute.y + 'px, 0)';
-        },
-        click: function(e) {
-          text.innerHTML += '<span class="click-drag">Click</span><br>';
-        },
+      bind('click-drag', {
+        up: undefined,
+        down: undefined
       });
 
       // TODO - Drag
