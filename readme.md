@@ -117,6 +117,16 @@ This guy's custom.  Here's the spec:
 }
 ```
 
+## Testing
+
+There's no test suite per-se.  Given the nature of dealing with browser
+interactions and bugs, writing one would be in the best case difficult
+and time-consuming, and in the worst just a waste of time.  Instead,
+there's a file in the repository called `test.html`.  Open that up in
+any browser and play with the elements.  A full test of the library
+involves just testing the expected interactions across a wide array of
+browsers and devices.
+
 ## License
 
 Public domain, see licence.txt for details.
