@@ -71,7 +71,7 @@
   // Event types: down, up, drag, click
   vz.touch = function(el, opts, events) {
     // Sanity
-    if (!el)
+    if (!el || el.length === 0)
       return function() {};
 
     // Handle jQuery, arrays, etc
