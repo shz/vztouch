@@ -127,6 +127,11 @@
     if (!opts)
       opts = {};
 
+    // If events is a function, treat it as shorthand syntax for just
+    // binding click.
+    if (typeof events == 'function')
+      events = {click: events};
+
     // Validate events and options
     for (var i in events) if (events.hasOwnProperty(i))
       if (['down', 'up', 'drag', 'click'].indexOf(i) < 0)
