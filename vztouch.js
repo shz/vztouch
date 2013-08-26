@@ -10,8 +10,7 @@
 //  * el - A DOM element, or array-like container of DOM elements (e.g.
 //         jQuery, Array, NodeList).
 //
-//  * options - Optional map of options to use.  None currently
-//              implemented.
+//  * options - Optional map of options to use.  See below for details.
 //
 //  * events - Map of events to bind.  Supported events: click down up
 //             drag.
@@ -37,8 +36,43 @@
 //
 // Note that relative, delta, and dragState ONLY appear for drag events
 //
+// Options:
+//
+//   Currently a single option is supported, `selector`.  If present,
+//   events will only be handled if the target matches `selector`.  This
+//   can to used to, for example, bind vztouch to `document.body` and
+//   handle events on all `a` tags.  Note that this requires recent
+//   browsers in order to function, notably IE9+.
+//
 
 (function() {
+
+  ///////////////////////////////////////////////
+  // Utility
+  ///////////////////////////////////////////////
+
+  var matchesSelector = function() {
+    var name = undefined;
+    var prefixii = 'webkit moz ms o'.split(/\s+/);
+    return function(el, sel) {
+      if (name === undefined) {
+        name = null;
+
+        if (typeof el.matches == 'function') {
+          name = 'matches';
+        } else {
+          prefixii.forEach(function(p) {
+            if (typeof el[p + 'MatchesSelector'] == 'function')
+              name = p + 'MatchesSelector';
+          });
+        }
+      } else if (name === null) {
+        return false;
+      } else {
+        return el[name](sel);
+      }
+    };
+  }();
 
   ///////////////////////////////////////////////
   // Internal flags
@@ -98,7 +132,7 @@
       if (['down', 'up', 'drag', 'click'].indexOf(i) < 0)
         throw new Error('Unsupported event "' + i + '"');
     for (var i in opts) if (opts.hasOwnProperty(i))
-      if (['allowDragScroll'].indexOf(i) < 0)
+      if (['allowDragScroll', 'selector'].indexOf(i) < 0)
         throw new Error('Unsupported option "' + i + '"');
 
     ////////////////////////////////////////////////////
@@ -211,6 +245,8 @@
     var down = function(e) {
       if (DEBUG)
         console.log('down', e.type);
+      if (opts.selector && !matchesSelector(e.target, opts.selector))
+        return;
 
       // Ignore multitouches or non-primary mousebutton clicks
       if ((e.touches && e.touches.length > 2) || (e.button !== undefined && e.button !== 0))
@@ -268,6 +304,8 @@
     var up = function(e) {
       if (DEBUG)
         console.log('up', e.type);
+      if (opts.selector && !matchesSelector(e.target, opts.selector))
+        return;
 
       var x = 0;
       var y = 0;
@@ -321,6 +359,8 @@
     var click = function(e) {
       if (DEBUG)
         console.log('click', e.type);
+      if (opts.selector && !matchesSelector(e.target, opts.selector))
+        return;
 
       if (!ignoreThisClick && events.click) {
         e.preventDefault();
