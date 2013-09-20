@@ -21,9 +21,9 @@ vz.touch($('#mything'), {
 
 There are a few buckets of functionality `vz.touch` provides:
 
- * Provides a normalized interface across touch and click events
- * Provides useful extra information with its events (e.g. cursor position)
- * Works around browser bugs
+ * A normalized interface across touch and click events
+ * Useful extra information with its events (e.g. cursor position)
+ * Workarounds for browser bugs (*cough* Android 4 stock browser *cough*)
 
 With the exception of the Android 4.x stock browser, `vz.touch` supports
 touch and click events *in tandem*, so if you've got, say, a touchscreen
@@ -84,6 +84,15 @@ handler.  Similarly, `this` inside a handler will be set to the element
 that triggered the event.  Note that, unlike a native event handler,
 `preventDefault()` has already been called.  A dummy one exists on the
 event argument for backwards compatibility, but it does nothing.
+
+#### Shorthand Syntax
+
+If you just want to bind a click event, you can pass a function instead
+of an event map.  Like so:
+
+```javascript
+vz.touch(el, function(e) { ... });
+```
 
 ### The event object
 
