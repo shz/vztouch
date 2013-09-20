@@ -2,10 +2,8 @@
 
 A cross-browser unified click/touch handling library from
 [Vizify](https://www.vizify.com).  It's small, it's fast, it solves
-all your problems.
-
-It has no dependencies and works right against the DOM API.  Older
-versions of IE are not supported.
+all your problems. It has no dependencies and works right against the
+DOM API.  Older versions of IE (< 8) are not supported.
 
 ## Example
 
@@ -22,7 +20,8 @@ vz.touch($('#mything'), {
 There are a few buckets of functionality `vz.touch` provides:
 
  * A normalized interface across touch and click events
- * Useful extra information with its events (e.g. cursor position)
+ * Fast clicks for touch devices (i.e. no 300ms delay)
+ * Useful extra information for events (e.g. cursor position)
  * Workarounds for browser bugs (*cough* Android 4 stock browser *cough*)
 
 With the exception of the Android 4.x stock browser, `vz.touch` supports
@@ -138,7 +137,7 @@ vz.touch(window, 'a', function(e) { window.location = e.target.href; });
 ```
 
 The listeners are bound to `window`, but events will only fire when they
-occur on `a` elements.
+occur on `a` elements.  Note that this is only supported in **IE9 and up**.
 
 ## Testing
 
