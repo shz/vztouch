@@ -38,6 +38,15 @@ slogs through the muck so you get the best available touch/click support
 with a nice API, without having to work for it.  It's the touch library
 you'd write if you had the time.
 
+## Installing
+
+The whole this is self contained, so you can just grab
+[vztouch.js](vztouch.js) and go.  There's also a bower package available:
+
+```bash
+bower install vztouch
+```
+
 ## How events are fired
 
 **click**
