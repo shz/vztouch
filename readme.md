@@ -69,7 +69,7 @@ killer();
 
  * `el` - Either a DOM element or an Array-like list of DOM elements (e.g.
           jQuery, `Array`, `NodeList`) to bind events to.
- * `options` - **optional** Options map.  Currently there are no options...
+ * `options` - **optional** Options map.  See below for available options.
  * `events` - Map of events to fire.  See above section for supported
               event names
 
@@ -88,11 +88,7 @@ event argument for backwards compatibility, but it does nothing.
 #### Shorthand Syntax
 
 If you just want to bind a click event, you can pass a function instead
-of an event map.  Like so:
-
-```javascript
-vz.touch(el, function(e) { ... });
-```
+of an event map.  Like so: `vz.touch(el, function(e) { ... });`
 
 ### The event object
 
@@ -102,7 +98,7 @@ This guy's custom.  Here's the spec:
 {
   preventDefault: Function, // Does nothing
   stopPropagation: Function, // Native stopPropagation functionality
-  target: Element, // Source of the event,
+  target: Element, // Source element of the event,
   absolute: {
     t: Number, // Unix timestamp the event occurred at
     x: Number, // Window X coordinate of the event
@@ -125,6 +121,24 @@ This guy's custom.  Here's the spec:
                     // 2 for ending (fired on last drag event)
 }
 ```
+
+### Options
+
+You can customize some of the behavior by passing in the `options`
+object  Here's a list of available options
+
+#### `selector` - Skips events unless the target matches the selector
+
+This is basically identical in functionality to the `selector` argument
+to [jQuery's `.on()` function](http://api.jquery.com/on/).  This is best
+demonstrated with an example:
+
+```javascript
+vz.touch(window, 'a', function(e) { window.location = e.target.href; });
+```
+
+The listeners are bound to `window`, but events will only fire when they
+occur on `a` elements.
 
 ## Testing
 
