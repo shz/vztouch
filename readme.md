@@ -31,7 +31,8 @@ laptop with a mouse plugged in, you can use either with no problems.
 One of the main benefits you'll get from `vz.touch` is that it handles
 any combination of events easily, which is a bit of a feat if you're
 trying to do it yourself.  For example, you can bind `click` and `drag`
-and both will be fired just as you expect.  It's non-trivial to accomplish.
+and both will be fired just as you expect, with full support for both
+click and touch.
 
 The short version of all this: `vz.touch` does nothing magical.  It just
 slogs through the muck so you get the best available touch/click support
@@ -40,7 +41,7 @@ you'd write if you had the time.
 
 ## Installing
 
-The whole this is self contained, so you can just grab
+The whole thing is self contained, so you can just grab
 [vztouch.js](vztouch.js) and go.  There's also a bower package available:
 
 ```bash
