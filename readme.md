@@ -1,6 +1,6 @@
 # vz.touch
 
-A cross-browser unified click/touch handling library from
+A cross-browser unified click/touch/drag handling library from
 [Vizify](https://www.vizify.com).  It's small, it's fast, it solves
 all your problems. It has no dependencies and works right against the
 DOM API.  Older versions of IE (< 8) are not supported.
@@ -11,6 +11,9 @@ DOM API.  Older versions of IE (< 8) are not supported.
 vz.touch($('#mything'), {
   click: function(e) {
     alert('Clicked!')
+  },
+  drag: function(e) {
+    console.log(e.delta);
   }
 });
 ```
@@ -19,7 +22,7 @@ vz.touch($('#mything'), {
 
 There are a few buckets of functionality `vz.touch` provides:
 
- * A normalized interface across touch and click events
+ * A normalized interface across touch and click events (click, down, up, drag)
  * Fast clicks for touch devices (i.e. no 300ms delay)
  * Useful extra information for events (e.g. cursor position)
  * Workarounds for browser bugs (*cough* Android 4 stock browser *cough*)
@@ -143,7 +146,7 @@ to [jQuery's `.on()` function](http://api.jquery.com/on/).  This is best
 demonstrated with an example:
 
 ```javascript
-vz.touch(window, 'a', function(e) { window.location = e.target.href; });
+vz.touch(window, {selector: 'a'}, function(e) { window.location = e.target.href; });
 ```
 
 The listeners are bound to `window`, but events will only fire when they
