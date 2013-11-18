@@ -1,7 +1,5 @@
 'use strict';
 
-// TODO - allowDragScroll: 'horizontal' || 'vertical'
-
 //
 // Quick usage:
 //
@@ -38,11 +36,16 @@
 //
 // Options:
 //
-//   Currently a single option is supported, `selector`.  If present,
-//   events will only be handled if the target matches `selector`.  This
-//   can to used to, for example, bind vztouch to `document.body` and
-//   handle events on all `a` tags.  Note that this requires recent
-//   browsers in order to function, notably IE9+.
+//   * `selector` - If present,
+//     events will only be handled if the target matches `selector`.  This
+//     can to used to, for example, bind vztouch to `document.body` and
+//     handle events on all `a` tags.  Note that this requires recent
+//     browsers in order to function, notably IE9+.
+//
+//   * `dragDirection` - If `'vertical'` or `'horizontal'`, dragging is
+//     locked to that particular axis.  Attempting to drag in the other
+//     direction will cause native browser behavior (e.g. scrolling on
+//     a mobile device).
 //
 
 (function() {
@@ -137,7 +140,7 @@
       if (['down', 'up', 'drag', 'click'].indexOf(i) < 0)
         throw new Error('Unsupported event "' + i + '"');
     for (var i in opts) if (opts.hasOwnProperty(i))
-      if (['allowDragScroll', 'selector'].indexOf(i) < 0)
+      if (['dragDirection', 'selector'].indexOf(i) < 0)
         throw new Error('Unsupported option "' + i + '"');
 
     ////////////////////////////////////////////////////
@@ -175,6 +178,9 @@
     // WITHIN threshold it will fire click instantly and set this so
     // that the regular touch event doesn't occur.
     var ignoreThisClick = false;
+
+    // Gets toggled by the drag listener if directional dragging is enabled
+    var ignoreThisDrag = false;
 
     // When true, drag events are bound to the window.  Reset after
     // a drag ends.
@@ -231,7 +237,7 @@
         dragEventsBound = false;
         if (events.drag && dragFired) {
           dragFired = false;
-          events.drag.call(dragInfo.target, {
+          var data = {
             stopPropagation: function() { e && e.stopPropagation() },
             preventDefault: function() {},
             target: dragInfo.target,
@@ -242,7 +248,17 @@
                       },
             delta: {x: 0, y: 0, t: (+new Date()) - dragInfo.t},
             dragState: 2
-          });
+          };
+          if (opts.dragDirection == 'horizontal') {
+            data.absolute.y =
+            data.relative.y =
+            data.delta.y = 0;
+          } else if (opts.dragDirection == 'vertical') {
+            data.absolute.x =
+            data.relative.x =
+            data.delta.x = 0;
+          }
+          events.drag.call(dragInfo.target, data);
         }
       }
     };
@@ -274,6 +290,9 @@
           }
         });
       }
+
+      // Re-enable drag listenering
+      ignoreThisDrag = false;
 
       // For dragging via mouse-type events, disable text selection.
       if (events.drag && e.type == 'mousedown') {
@@ -390,6 +409,10 @@
       if (e.touches && e.touches.length > 1)
         return;
 
+      // If we're ignoring the drag, there's nothing to do
+      if (ignoreThisDrag)
+        return;
+
       // New position
       var nx = getPosX(e);
       var ny = getPosY(e);
@@ -408,6 +431,17 @@
         dragState: dragInfo.state
       };
 
+      // When limiting to one axis, ignore the other axis' values
+      if (opts.dragDirection == 'horizontal') {
+        data.absolute.y =
+        data.relative.y =
+        data.delta.y = 0;
+      } else if (opts.dragDirection == 'vertical') {
+        data.absolute.x =
+        data.relative.x =
+        data.delta.x = 0;
+      }
+
       // Update the last position
       dragInfo.t = nt;
       dragInfo.x = nx;
@@ -415,9 +449,25 @@
       dragInfo.tx += Math.abs(data.delta.x);
       dragInfo.ty += Math.abs(data.delta.y);
 
+      // If we're limiting dragging to one axis, check for the direction of the first
+      // drag event to make a decision.
+      if (data.dragState == 0) {
+        if (opts.dragDirection == 'vertical') {
+          if (dragInfo.ty < dragInfo.tx) {
+            ignoreThisDrag = true;
+            return;
+          }
+        } else if (opts.dragDirection == 'horizontal') {
+          if (dragInfo.tx < dragInfo.ty) {
+            ignoreThisDrag = true;
+            return;
+          }
+        }
+      }
+
       // When true, we've passed the drag threshold and are treating
       // this drag as a drag and not a sloppy click.
-      var overThreshold = dragInfo.tx > DRAG_THRESHOLD || dragInfo.ty > DRAG_THRESHOLD;
+      var overThreshold = (dragInfo.tx > DRAG_THRESHOLD) || (dragInfo.ty > DRAG_THRESHOLD);
 
       // If we've moved more than the drag threshold on either axis, stop
       // click from happening.
@@ -436,8 +486,6 @@
           dragFired = true;
           dragInfo.state = 1;
         }
-
-        // TODO - Support allowances for scrolling in one direction
       }
     };
 

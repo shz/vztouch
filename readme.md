@@ -152,6 +152,18 @@ vz.touch(window, {selector: 'a'}, function(e) { window.location = e.target.href;
 The listeners are bound to `window`, but events will only fire when they
 occur on `a` elements.  Note that this is only supported in **IE9 and up**.
 
+#### `dragDirection` - Locks dragging to one axis
+
+If this is set to `'horizontal'`, then the element will only be dragged
+along the X axis.  If the value is `'vertical'`, then the element will
+only be dragged along the Y axis.
+
+The key reason you'll use this option is that drags on the other axes
+trigger *native browser behavior*.  Most significantly, this includes
+scrolling on mobile devices.  By using, for example, `dragDirection: 'horizontal'`,
+you allow the user to scroll vertically even when they touch down on
+the element to do it.
+
 ## Testing
 
 There's no test suite per-se.  Given the nature of dealing with browser
