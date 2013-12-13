@@ -176,6 +176,6 @@ browsers and devices.
 
 ## License
 
-Public domain, see licence.txt for details.
+Public domain, see [licence.txt](license.txt) for details.
 
 Developed at and opened sourced by [Vizify](https://www.vizify.com), from Portland with love.
